@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -86,7 +87,7 @@
         <scene sceneID="VMY-tl-mJb">
             <objects>
                 <tableViewController id="RCW-yu-6tO" customClass="DetailTableViewController" customModule="AppShowcaseRegistration" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="TgG-oz-upO">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="TgG-oz-upO">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -235,12 +236,42 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="" id="dnp-cj-V3n">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="291" id="bbo-b1-MQb">
+                                        <rect key="frame" x="0.0" y="410" width="375" height="291"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bbo-b1-MQb" id="TTx-1s-0B5">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="290.66666666666669"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1Iv-KN-CZs">
+                                                    <rect key="frame" x="16" y="11" width="343" height="269"/>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottomMargin" secondItem="1Iv-KN-CZs" secondAttribute="bottom" id="Am7-vG-a8O"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="1Iv-KN-CZs" secondAttribute="trailing" id="Zfj-7H-881"/>
+                                                <constraint firstItem="1Iv-KN-CZs" firstAttribute="leading" secondItem="TTx-1s-0B5" secondAttribute="leadingMargin" id="dV2-Wm-qYo"/>
+                                                <constraint firstItem="1Iv-KN-CZs" firstAttribute="top" secondItem="TTx-1s-0B5" secondAttribute="topMargin" id="gmt-q8-nDm"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="RCW-yu-6tO" id="rSt-tp-G8f"/>
                             <outlet property="delegate" destination="RCW-yu-6tO" id="aHF-cO-m6Y"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem systemItem="camera" id="Sdf-aP-fz3">
+                            <connections>
+                                <action selector="cameraButtonPressed:" destination="RCW-yu-6tO" id="IsQ-gZ-w7M"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="MHH-KQ-qnS">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="t5p-5A-Qpv">
                             <connections>
@@ -253,8 +284,10 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="appDescriptionTextView" destination="L1U-uA-PFD" id="545-Hm-7md"/>
+                        <outlet property="appImage" destination="1Iv-KN-CZs" id="BoY-TG-3kr"/>
                         <outlet property="appNameTextField" destination="ebk-D9-ymb" id="xKx-zh-gd6"/>
                         <outlet property="firstNameTextField" destination="Aaf-H9-ShE" id="jfT-Ly-S6h"/>
                         <outlet property="lastNameTextField" destination="w47-ya-AuV" id="AYU-Ni-QHm"/>
@@ -285,13 +318,18 @@
         <!--Navigation Controller-->
         <scene sceneID="Cux-P6-n5A">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="2aK-74-nV4" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="2aK-74-nV4" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="eEf-zN-Wcb">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="LxL-RF-7c8">
+                        <rect key="frame" x="0.0" y="729" width="375" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="RCW-yu-6tO" kind="relationship" relationship="rootViewController" id="IYM-rH-WNk"/>
                     </connections>
@@ -302,6 +340,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="g2J-iB-pGt"/>
+        <segue reference="IYM-rH-WNk"/>
     </inferredMetricsTieBreakers>
 </document>

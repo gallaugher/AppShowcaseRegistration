@@ -18,6 +18,7 @@ class Student  {
     var coordinate: CLLocationCoordinate2D
     var postingUserID: String
     var imageID: String
+    var image: UIImage
     var documentID: String
     
     var latitude: CLLocationDegrees {
@@ -34,7 +35,7 @@ class Student  {
     }
     
     init(firstName: String, lastName: String,
-         appName: String, appDescription: String, coordinate: CLLocationCoordinate2D, postingUserID: String, imageID: String, documentID: String) {
+         appName: String, appDescription: String, coordinate: CLLocationCoordinate2D, postingUserID: String, imageID: String, image: UIImage, documentID: String) {
         self.firstName = firstName
         self.lastName = lastName
         self.appName = appName
@@ -42,11 +43,12 @@ class Student  {
         self.coordinate = coordinate
         self.postingUserID = postingUserID
         self.imageID = imageID
+        self.image = image
         self.documentID = documentID
     }
     
     convenience init() {
-        self.init(firstName: "", lastName: "", appName: "", appDescription: "", coordinate: CLLocationCoordinate2D(), postingUserID: "", imageID: "", documentID: "")
+        self.init(firstName: "", lastName: "", appName: "", appDescription: "", coordinate: CLLocationCoordinate2D(), postingUserID: "", imageID: "", image: UIImage(), documentID: "")
     }
     
     convenience init(dictionary: [String: Any]) {
@@ -59,10 +61,29 @@ class Student  {
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let postingUserID = dictionary["postingUserID"] as! String? ?? ""
         let imageID = dictionary["imageID"] as! String? ?? ""
-        self.init(firstName: firstName, lastName: lastName, appName: appName, appDescription: appDescription, coordinate: coordinate, postingUserID: postingUserID, imageID: imageID, documentID: "")
+        self.init(firstName: firstName, lastName: lastName, appName: appName, appDescription: appDescription, coordinate: coordinate, postingUserID: postingUserID, imageID: imageID,image: UIImage(), documentID: "")
+    }
+    
+    func loadImage(completed: @escaping () -> ()) {
+        let storage = Storage.storage()
+        // Create a ref to hold the new photo that we're loading
+        let storageRef =
+            storage.reference().child(self.imageID)
+        storageRef.getData(maxSize: 25 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("An error occurred while reading data from file ref: \(storageRef), error \(error.localizedDescription)")
+                completed()
+            } else {
+                self.image = UIImage(data: data!) ?? UIImage()
+                completed()
+            }
+        }
     }
     
     func saveData(completed: @escaping (Bool) -> ()) {
+        // Create a unique doc name - since we're not doing "addDocument() for the image, we need to use UUID().uuidString to give us a unique value that we'll use as the image's file name.
+        imageID = UUID().uuidString
+        
         let db = Firestore.firestore()
         // Grab the userID
         guard let postingUserID = (Auth.auth().currentUser?.uid) else {
@@ -94,10 +115,35 @@ class Student  {
                 } else {
                     print("^^^ new document created with ref ID \(ref?.documentID ?? "unknown")")
                     self.documentID = ref!.documentID
-                    completed(true)
+                    // completed(true)
+                    // Commented out because we are adding an image and we're not yet done
                 }
             }
         }
+        
+        // Create a storage instance, just like db
+        let storage = Storage.storage()
+        // Convert image to type Data so it can be saved to Storage
+        guard let photoData = UIImageJPEGRepresentation(self.image, 0.5) else {
+            print("*** ERROR: creating imageData from JPEGRepresentation")
+            return completed(false)
+        }
+        let storageRef =
+            storage.reference().child(self.imageID)
+        // Save it & check the result
+        let uploadTask = storageRef.putData(photoData)
+        
+        // If .success, all is good
+        uploadTask.observe(.success) { snapshot in // Report if update is successful
+            completed(true)
+        }
+        
+        // If .failure, completed is false
+        uploadTask.observe(.failure) { (snapshot) in
+            if let error = snapshot.error {
+                print("*** ERROR: Could not upload image w/imageID: \(self.imageID), \(error.localizedDescription)")
+                completed(false)
+            }
+        }
     }
-
 }
